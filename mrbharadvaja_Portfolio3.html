@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<!-- Initial language is English -->
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio — Mr Bharadvaja</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Base Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712; /* Black */
+            color: #f8fafc; /* White */
+        }
+
+        /* --- Custom List Styles --- */
+        .list-check {
+            list-style: none;
+            padding-left: 0;
+        }
+        .list-check li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .list-check li::before {
+            content: '✔';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #84cc16; /* Parrot Green */
+            font-weight: 700;
+        }
+        .list-rocket {
+            list-style: none;
+            padding-left: 0;
+        }
+        .list-rocket li {
+            position: relative;
+            padding-left: 2rem;
+        }
+        .list-rocket li::before {
+            content: '🚀';
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        /* --- Gradient Text --- */
+        .text-gradient-pop {
+            background-image: linear-gradient(to right, #facc15, #84cc16); /* Mustard Yellow to Parrot Green */
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* --- Underline Heading --- */
+        .heading-underline {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+        .heading-underline::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50%;
+            height: 4px;
+            background-color: #2563eb; /* Blue */
+        }
+
+        /* --- Hero Title Animation --- */
+        #hero-title {
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+        #hero-title span {
+            opacity: 0;
+            display: inline-block;
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* --- On-Scroll Fade-in Animation (FIX) --- */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .scroll-animate.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Expertise Card Hover --- */
+        .expertise-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            border: 1px solid #1f2937; /* Gray-800 */
+        }
+        .expertise-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(37, 99, 235, 0.5); /* Blue glow */
+            border-color: #2563eb; /* Blue */
+        }
+
+        /* --- Animated Photo Frame --- */
+        .animated-photo-frame {
+            position: relative;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .animated-photo-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 3px solid transparent;
+            border-radius: 0.5rem;
+            animation: pulse-border 4s infinite linear;
+            transition: border 0.3s ease;
+        }
+        .animated-photo-frame:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+        }
+        .animated-photo-frame:hover::before {
+            border: 3px solid #facc15; /* Yellow */
+        }
+        @keyframes pulse-border {
+            0% { border-color: #facc15; } /* Yellow */
+            50% { border-color: #2563eb; } /* Blue */
+            100% { border-color: #facc15; } /* Yellow */
+        }
+        /* Ensure image inside is responsive */
+        .animated-photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+
+        /* --- NEW: Sticky Navigation --- */
+        .sticky-nav {
+            background-color: rgba(3, 7, 18, 0.85); /* Dark background with opacity */
+            backdrop-filter: blur(10px);
+            z-index: 50;
+            transition: all 0.3s ease;
+            /* Start hidden */
+            opacity: 0;
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+        .sticky-nav.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* --- NEW: Side Navigation (Dots) --- */
+        .side-nav {
+            position: fixed;
+            top: 50%;
+            right: 1.5rem; /* 24px */
+            transform: translateY(-50%);
+            z-index: 40;
+            display: none; /* Hidden by default */
+            /* NEW: Start hidden, will be shown by JS */
+            opacity: 0; 
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        @media (min-width: 768px) { /* md:block */
+            .side-nav {
+                display: block;
+            }
+        }
+        .side-nav-link {
+            display: block;
+            width: 12px;
+            height: 12px;
+            margin: 1rem 0;
+            background-color: #4b5563; /* Gray-600 */
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            position: relative; /* For tooltip */
+        }
+        .side-nav-link:hover,
+        .side-nav-link.active {
+            background-color: #facc15; /* Yellow */
+            transform: scale(1.2);
+        }
+        
+        /* NEW: Side Nav Tooltip */
+        .side-nav-link .tooltip {
+            position: absolute;
+            top: 50%;
+            right: 150%; /* To the left */
+            transform: translateY(-50%) scale(0.9);
+            background-color: #facc15; /* Yellow */
+            color: #030712; /* Black */
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .side-nav-link:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-50%) scale(1);
+        }
+
+
+        /* --- NEW: Modal Popup --- */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            /* Start hidden */
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .modal-backdrop.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #111827; /* Dark blue-grey */
+            border: 1px solid #374151;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 48rem; /* 768px */
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            /* NEW: Start scaled down */
+            transform: scale(0.95);
+            transition: all 0.3s ease;
+        }
+        .modal-backdrop.visible .modal-content {
+            transform: scale(1);
+        }
+        /* Modal tab styling */
+        .modal-tab {
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            color: #9ca3af;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .modal-tab:hover {
+            color: #e5e7eb;
+        }
+        .modal-tab.active {
+            color: #facc15; /* Yellow */
+            border-color: #facc15;
+        }
+        .modal-tab-panel {
+            display: none;
+        }
+        .modal-tab-panel.active {
+            display: block;
+            animation: fadeInPanel 0.5s ease;
+        }
+        @keyframes fadeInPanel {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* NEW: Keyframe for modal open glow */
+        @keyframes modal-open-glow {
+            0% {
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0px 0px rgba(250, 204, 21, 0.7);
+            }
+            50% {
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px 8px rgba(250, 204, 21, 0.7);
+            }
+            100% {
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0px 0px rgba(250, 204, 21, 0);
+            }
+        }
+        .modal-content.glow {
+            animation: modal-open-glow 1s ease-out;
+        }
+        
+        /* Scrollbar styling for modal */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        /* --- NEW: Language Switcher Styles --- */
+        /* By default, hide Hindi elements */
+        [data-lang-hi] {
+            display: none !important;
+        }
+        [data-lang-en] {
+            display: inline !important; /* Use inline for spans */
+        }
+        /* When lang="hi", hide English */
+        html[lang="hi"] [data-lang-en] {
+            display: none !important;
+        }
+        html[lang="hi"] [data-lang-hi] {
+            display: inline !important;
+        }
+        /* Handle block elements */
+        h1[data-lang-en], p[data-lang-en] { display: block !important; }
+        h1[data-lang-hi], p[data-lang-hi] { display: none !important; }
+        html[lang="hi"] h1[data-lang-en], html[lang="hi"] p[data-lang-en] { display: none !important; }
+        html[lang="hi"] h1[data-lang-hi], html[lang="hi"] p[data-lang-hi] { display: block !important; }
+
+
+        /* --- NEW: Floating Action Buttons (WhatsApp & Chat) --- */
+        .fab-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 80;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .fab-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .fab-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        .fab-whatsapp {
+            background-color: #25D366; /* WhatsApp Green */
+            color: white;
+        }
+        .fab-chat {
+            background-color: #2563eb; /* Blue */
+            color: white;
+        }
+
+        /* --- NEW: AI Chat Widget --- */
+        .chat-widget {
+            position: fixed;
+            bottom: 7rem; /* Above the FABs */
+            right: 2rem;
+            width: 350px;
+            max-width: 90vw;
+            height: 500px;
+            max-height: 70vh;
+            background-color: #111827; /* Dark blue-grey */
+            border: 1px solid #374151;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 70;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            /* Start hidden */
+            opacity: 0;
+            transform: translateY(20px);
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .chat-widget.visible {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+        .chat-header {
+            background-color: #374151; /* Grey */
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: 600;
+        }
+        .chat-header .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .chat-body {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .chat-message {
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+        .chat-message.bot {
+            background-color: #374151;
+            color: #f1f5f9;
+            align-self: flex-start;
+        }
+        .chat-message.user {
+            background-color: #2563eb;
+            color: white;
+            align-self: flex-end;
+        }
+        .chat-quick-reply {
+            padding: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            border-top: 1px solid #374151;
+        }
+        .quick-reply-btn {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+        .quick-reply-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- ===== NEW: STICKY NAVIGATION ===== -->
+    <nav id="sticky-nav-container" class="sticky-nav fixed top-0 left-0 w-full shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo / Name -->
+                <div class="flex-shrink-0 flex items-center">
+                    <img class="h-10 w-10 rounded-full" 
+                         src="https://i.imgur.com/FsOxXkn.jpg" 
+                         alt="Mr Bharadvaja">
+                    <span class="ml-3 text-white font-bold text-xl">MR BHARADVAJA</span>
+                </div>
+                <!-- Menu Items -->
+                <div class="hidden md:flex md:items-center md:space-x-4">
+                    <a href="#summary" class="text-gray-300 hover:text-yellow-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <span data-lang-en>Summary</span><span data-lang-hi>सारांश</span>
+                    </a>
+                    <a href="#expertise" class="text-gray-300 hover:text-yellow-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <span data-lang-en>Expertise</span><span data-lang-hi>विशेषज्ञता</span>
+                    </a>
+                    <a href="#services" class="text-gray-300 hover:text-yellow-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <span data-lang-en>Services</span><span data-lang-hi>सेवाएं</span>
+                    </a>
+                    <a href="#experience" class="text-gray-300 hover:text-yellow-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <span data-lang-en>Experience</span><span data-lang-hi>अनुभव</span>
+                    </a>
+                    <a href="#contact" class="text-gray-300 hover:text-yellow-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <span data-lang-en>Contact</span><span data-lang-hi>संपर्क</span>
+                    </a>
+                    <button id="lang-toggle-btn" class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-700 transition-colors">
+                        EN / HI
+                    </button>
+                </div>
+                <!-- Mobile Menu Button (placeholder) -->
+                <div class="md:hidden">
+                    <button class="text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== NEW: SIDE NAVIGATION (DOTS) ===== -->
+    <nav id="side-nav-container" class="side-nav">
+        <a href="#summary" class="side-nav-link" data-section="summary">
+            <span class="tooltip"><span data-lang-en>Summary</span><span data-lang-hi>सारांश</span></span>
+        </a>
+        <a href="#expertise" class="side-nav-link" data-section="expertise">
+            <span class="tooltip"><span data-lang-en>Expertise</span><span data-lang-hi>विशेषज्ञता</span></span>
+        </a>
+        <a href="#services" class="side-nav-link" data-section="services">
+            <span class="tooltip"><span data-lang-en>Services</span><span data-lang-hi>सेवाएं</span></span>
+        </a>
+        <a href="#experience" class="side-nav-link" data-section="experience">
+            <span class="tooltip"><span data-lang-en>Experience</span><span data-lang-hi>अनुभव</span></span>
+        </a>
+        <a href="#skills" class="side-nav-link" data-section="skills">
+            <span class="tooltip"><span data-lang-en>Skills</span><span data-lang-hi>कौशल</span></span>
+        </a>
+        <a href="#contact" class="side-nav-link" data-section="contact">
+            <span class="tooltip"><span data-lang-en>Contact</span><span data-lang-hi>संपर्क</span></span>
+        </a>
+    </nav>
+
+    <!-- ===== NEW: SERVICE MODAL POPUP ===== -->
+    <div id="service-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h3 class="text-xl font-bold text-white">
+                    <span data-lang-en>Service Details</span><span data-lang-hi>सेवा विवरण</span>
+                </h3>
+                <button id="modal-close-btn" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <!-- Modal Body -->
+            <div class="p-6">
+                <h4 class="text-2xl font-semibold text-gradient-pop mb-4">
+                    <span data-lang-en>Brand Promotion for MSMEs & Local Businesses</span>
+                    <span data-lang-hi>MSMEs और स्थानीय व्यवसायों के लिए ब्रांड प्रमोशन</span>
+                </h4>
+                
+                <!-- Tab Buttons -->
+                <div class="flex border-b border-gray-700 mb-4 overflow-x-auto">
+                    <button class="modal-tab active" data-tab="details">
+                        <span data-lang-en>Details</span><span data-lang-hi>विवरण</span>
+                    </button>
+                    <button class="modal-tab" data-tab="pricing">
+                        <span data-lang-en>Pricing</span><span data-lang-hi>मूल्य</span>
+                    </button>
+                    <button class="modal-tab" data-tab="work">
+                        <span data-lang-en>Past Work</span><span data-lang-hi>पुराने काम</span>
+                    </button>
+                    <button class="modal-tab" data-tab="feedback">
+                        <span data-lang-en>Feedback</span><span data-lang-hi>फीडबैक</span>
+                    </button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="text-gray-300">
+                    <!-- Panel 1: Details -->
+                    <div id="tab-panel-details" class="modal-tab-panel active">
+                        <p class="mb-4">
+                            <span data-lang-en>Complete branding and digital growth solution for local businesses. We set up your business online and help bring in customers.</span>
+                            <span data-lang-hi>स्थानीय व्यवसायों के लिए संपूर्ण ब्रांडिंग और डिजिटल ग्रोथ समाधान। हम आपके व्यवसाय को ऑनलाइन सेट करते हैं और ग्राहक लाने में मदद करते हैं।</span>
+                        </p>
+                        <ul class="list-check">
+                            <li><span data-lang-en>Brand setup (Google, Facebook, etc.)</span><span data-lang-hi>ब्रांड सेटअप (गूगल, फेसबुक, आदि)</span></li>
+                            <li><span data-lang-en>Photo/video content creation</span><span data-lang-hi>फोटो/वीडियो कंटेंट निर्माण</span></li>
+                            <li><span data-lang-en>Reviews building strategy</span><span data-lang-hi>रिव्यू बिल्डिंग रणनीति</span></li>
+                            <li><span data-lang-en>Ads funnels for lead generation</span><span data-lang-hi>लीड जनरेशन के लिए विज्ञापन फनल</span></li>
+                            <li><span data-lang-en>Reputation growth</span><span data-lang-hi>प्रतिष्ठा वृद्धि</span></li>
+                        </ul>
+                    </div>
+                    <!-- Panel 2: Pricing -->
+                    <div id="tab-panel-pricing" class="modal-tab-panel">
+                        <p class="mb-4">
+                            <span data-lang-en>Pricing is customized based on your needs. Every business has different requirements.</span>
+                            <span data-lang-hi>मूल्य निर्धारण आपकी आवश्यकताओं के आधार पर अनुकूलित किया जाता है। हर व्यवसाय की ज़रूरतें अलग होती हैं।</span>
+                        </p>
+                        <div class="bg-gray-800 p-4 rounded-lg">
+                            <h5 class="font-bold text-yellow-400">
+                                <span data-lang-en>Basic Package</span><span data-lang-hi>बेसिक पैकेज</span>
+                            </h5>
+                            <p><span data-lang-en>Starts at [Your Price] (one-time setup)</span><span data-lang-hi>[आपकी कीमत] से शुरू (वन-टाइम सेटअप)</span></p>
+                            <h5 class="font-bold text-yellow-400 mt-4">
+                                <span data-lang-en>Growth Package</span><span data-lang-hi>ग्रोथ पैकेज</span>
+                            </h5>
+                            <p><span data-lang-en>Starts at [Your Price] (monthly retainer)</span><span data-lang-hi>[आपकी कीमत] से शुरू (मासिक रिटेनर)</span></p>
+                            <p class="text-sm text-gray-400 mt-4">
+                                <span data-lang-en>Please contact for a detailed, no-obligation quote.</span>
+                                <span data-lang-hi>विस्तृत कोटेशन के लिए कृपया संपर्क करें।</span>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Panel 3: Past Work -->
+                    <div id="tab-panel-work" class="modal-tab-panel">
+                        <p class="mb-4">
+                            <span data-lang-en>Here are some examples of local businesses we have helped.</span>
+                            <span data-lang-hi>यहां उन स्थानीय व्यवसायों के कुछ उदाहरण दिए गए हैं जिनकी हमने मदद की है।</span>
+                        </p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Placeholder 1 - UPDATED -->
+                            <div class="bg-gray-800 rounded-lg p-4 text-center">
+                                <img src="https://i.imgur.com/U30dEkk.jpg" alt="Past Work 1" class="rounded-md mb-2 w-full">
+                                <p class="font-semibold"><span data-lang-en>AI Portrait</span><span data-lang-hi>AI पोर्ट्रेट</span></p>
+                            </div>
+                            <!-- Placeholder 2 - Kept as placeholder -->
+                            <div class="bg-gray-800 rounded-lg p-4 text-center">
+                                <img src="https://placehold.co/300x200/111827/84cc16?text=Real+Estate+Project" alt="Past Work 2" class="rounded-md mb-2 w-full">
+                                <p class="font-semibold"><span data-lang-en>Real Estate Project</span><span data-lang-hi>रियल एस्टेट प्रोजेक्ट</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Panel 4: Feedback -->
+                    <div id="tab-panel-feedback" class="modal-tab-panel">
+                        <p class="mb-4">
+                            <span data-lang-en>What our clients say about us.</span>
+                            <span data-lang-hi>हमारे ग्राहक हमारे बारे में क्या कहते हैं।</span>
+                        </p>
+                        <div class="space-y-4">
+                            <!-- Testimonial 1 -->
+                            <div class="bg-gray-800 p-4 rounded-lg border-l-4 border-lime-400">
+                                <p class="italic">
+                                    <span data-lang-en>"Mr Bharadvaja's team transformed our online presence. We saw a 200% increase in leads."</span>
+                                    <span data-lang-hi>"मिस्टर भारद्वाज की टीम ने हमारी ऑनलाइन उपस्थिति को बदल दिया। हमने लीड्स में 200% की वृद्धि देखी।"</span>
+                                </p>
+                                <p class="font-bold text-right text-gray-400 mt-2">- <span data-lang-en>A. Kumar, Lucknow</span><span data-lang-hi>- ए. कुमार, लखनऊ</span></p>
+                            </div>
+                            <!-- Testimonial 2 -->
+                            <div class="bg-gray-800 p-4 rounded-lg border-l-4 border-lime-400">
+                                <p class="italic">
+                                    <span data-lang-en>"The AI content strategy was brilliant. Highly recommended."</span>
+                                    <span data-lang-hi>"AI कंटेंट रणनीति शानदार थी। अत्यंत अनुशंसित।"</span>
+                                </p>
+                                <p class="font-bold text-right text-gray-400 mt-2">- <span data-lang-en>S. Gupta, Delhi</span><span data-lang-hi>- एस. गुप्ता, दिल्ली</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ===== HEADER / HERO SECTION ===== -->
+    <header id="hero" class="min-h-screen w-full flex items-center justify-center text-center p-4 md:p-8"
+        style="background: radial-gradient(circle, #1f2937 0%, #030712 70%);">
+        <div class="max-w-4xl mx-auto">
+            <!-- Animated Title -->
+            <h1 id="hero-title"
+                class="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold mb-4 bg-gradient-to-r from-yellow-400 via-lime-400 to-yellow-300 bg-clip-text text-transparent"
+                aria-label="MR BHARADVAJA">
+                <!-- Spans will be auto-generated by JS -->
+                MR BHARADVAJA
+            </h1>
+            <!-- NEW: Profile Photo UPDATED -->
+            <div class="flex justify-center my-8 scroll-animate" style="transition-delay: 800ms;">
+                <img src="https://i.imgur.com/FsOxXkn.jpg" 
+                     alt="Mr Bharadvaja"
+                     class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-gray-700 shadow-xl object-cover">
+            </div>
+            <!-- Subtitles -->
+            <div id="hero-subtitles" class="scroll-animate">
+                <p
+                    class="text-lg sm:text-xl md:text-2xl font-light text-gray-300 tracking-wide leading-relaxed max-w-3xl mx-auto">
+                    <span data-lang-en>Digital Creator</span><span data-lang-hi>डिजिटल क्रिएटर</span> <span class="text-blue-400">|</span>
+                    <span data-lang-en>AI Specialist</span><span data-lang-hi>AI विशेषज्ञ</span> <span class="text-blue-400">|</span>
+                    <span data-lang-en>Branding Architect</span><span data-lang-hi>ब्रांडिंग आर्किटेक्ट</span> <span class="text-blue-400">|</span>
+                    <span data-lang-en>Growth Strategist</span><span data-lang-hi>ग्रोथ स्ट्रैटेजिस्ट</span> <span class="text-blue-400">|</span>
+                    <span data-lang-en>Business Storyteller</span><span data-lang-hi>बिजनेस स्टोरीटेलर</span>
+                </p>
+                <!-- Location -->
+                <div class="mt-6 text-gray-500 font-medium tracking-wider">
+                    <span>
+                        <svg class="w-5 h-5 inline-block -mt-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        India • Indonesia
+                    </span>
+                </div>
+                <!-- Founder Tag -->
+                <div class="mt-8">
+                    <span
+                        class="inline-block bg-gray-800 border border-gray-700 text-yellow-400 text-sm font-medium px-4 py-2 rounded-full shadow-lg">
+                        <span data-lang-en>Founder — MR BHARADVAJA</span><span data-lang-hi>संस्थापक — मिस्टर भारद्वाज</span>
+                    </span>
+                </div>
+            </div>
+            <!-- Scroll Down Indicator -->
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 text-gray-500">
+                <svg class="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3">
+                    </path>
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full overflow-x-hidden">
+
+        <!-- ===== SECTION: PROFILE SUMMARY ===== -->
+        <section id="summary" class="py-16 md:py-24 px-4 md:px-8">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
+                    <!-- NEW: Animated Photo Column - UPDATED -->
+                    <div class="md:col-span-1 scroll-animate">
+                        <div class="animated-photo-frame">
+                            <img src="https://i.imgur.com/lV0oxJ6.jpg" 
+                                 alt="Mr Bharadvaja Profile"
+                                 class="rounded-lg">
+                        </div>
+                    </div>
+                    <!-- Text Column -->
+                    <div class="md:col-span-2 scroll-animate">
+                        <h2 class="text-3xl md:text-4xl font-extrabold mb-6">
+                            <span class="heading-underline">
+                                <span data-lang-en>Profile Summary</span><span data-lang-hi>प्रोफाइल सारांश</span>
+                            </span>
+                        </h2>
+                        <p class="text-xl md:text-2xl font-light text-gray-300 leading-relaxed mb-8">
+                            <span data-lang-en>I am Mr Bharadvaja, a modern-era digital creator who blends</span>
+                            <span data-lang-hi>मैं मिस्टर भारद्वाज हूँ, एक नए युग का डिजिटल क्रिएटर जो</span>
+                            <strong class="font-semibold text-white">
+                                <span data-lang-en>AI, storytelling, marketing, and brand psychology</span>
+                                <span data-lang-hi>AI, स्टोरीटेलिंग, मार्केटिंग और ब्रांड साइकोलॉजी</span>
+                            </strong>
+                            <span data-lang-en>to help people and businesses grow faster in today’s content-driven world.</span>
+                            <span data-lang-hi>को मिलाकर लोगों और व्यवसायों को आज की कंटेंट-संचालित दुनिया में तेजी से बढ़ने में मदद करता हूँ।</span>
+                        </p>
+                        <p class="text-lg text-gray-400 mb-8">
+                            <span data-lang-en>My work lives at the intersection of:</span>
+                            <span data-lang-hi>मेरा काम इन क्षेत्रों के संगम पर है:</span>
+                        </p>
+                        <ul class="list-check text-gray-200 text-lg space-y-3 mb-8">
+                            <li><span data-lang-en>Digital Marketing</span><span data-lang-hi>डिजिटल मार्केटिंग</span></li>
+                            <li><span data-lang-en>AI Content Systems</span><span data-lang-hi>AI कंटेंट सिस्टम</span></li>
+                            <li><span data-lang-en>Social Media Growth</span><span data-lang-hi>सोशल मीडिया ग्रोथ</span></li>
+                            <li><span data-lang-en>Brand Trust Building</span><span data-lang-hi>ब्रांड ट्रस्ट बिल्डिंग</span></li>
+                            <li><span data-lang-en>Startup & MSME Consulting</span><span data-lang-hi>स्टार्टअप और MSME कंसल्टिंग</span></li>
+                            <li><span data-lang-en>Property & Local Business Promotion</span><span data-lang-hi>प्रॉपर्टी और स्थानीय व्यापार प्रचार</span></li>
+                            <li><span data-lang-en>Storytelling for Modern Audiences</span><span data-lang-hi>आधुनिक दर्शकों के लिए स्टोरीटेलिंग</span></li>
+                        </ul>
+                        <p class="text-lg text-gray-400 mb-8">
+                            <span data-lang-en>Over the last decade, I’ve crafted digital assets, campaigns, and brand identities for international giants, startups, real estate developers, local brands, and creators.</span>
+                            <span data-lang-hi>पिछले दशक में, मैंने अंतरराष्ट्रीय दिग्गजों, स्टार्टअप्स, रियल एस्टेट डेवलपर्स, स्थानीय ब्रांडों और क्रिएटर्स के लिए डिजिटल संपत्ति, अभियान और ब्रांड पहचान तैयार की है।</span>
+                        </p>
+                        <!-- NEW: Benefit Text -->
+                        <p class="text-lg text-gray-300 mt-8">
+                            <strong>
+                                <span data-lang-en>Aapko kya fayda hoga?</span><span data-lang-hi>आपको क्या फायदा होगा?</span>
+                            </strong>
+                            <span data-lang-en>Mera kaam sirf content banana nahi, balki aapke audience ke saath ek</span>
+                            <span data-lang-hi>मेरा काम सिर्फ कंटेंट बनाना नहीं, बल्कि आपके दर्शकों के साथ एक</span>
+                            <strong class="text-white">
+                                <span data-lang-en>gehra trust build karna hai.</span>
+                                <span data-lang-hi>गहरा विश्वास बनाना है।</span>
+                            </strong>
+                            <span data-lang-en>This trust leads to sustainable growth and real business results.</span>
+                            <span data-lang-hi>यह विश्वास स्थायी विकास और वास्तविक व्यावसायिक परिणाम लाता है।</span>
+                        </p>
+                        <p class="text-xl font-medium text-yellow-400 italic border-l-4 border-yellow-400 pl-4 mt-8">
+                            <span data-lang-en>My mission: Turn individuals & businesses into brands people trust.</span>
+                            <span data-lang-hi>मेरा मिशन: व्यक्तियों और व्यवसायों को उन ब्रांडों में बदलना जिन पर लोग भरोसा करते हैं।</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECTION: CORE EXPERTISE ===== -->
+        <section id="expertise" class="py-16 md:py-24 px-4 md:px-8 bg-gray-900">
+            <div class="max-w-7xl mx-auto">
+                <!-- Section Header with Image -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-12 md:mb-20 scroll-animate">
+                    <div class="md:col-span-2 text-center md:text-left">
+                        <span class="text-sm font-semibold text-blue-400 uppercase tracking-wider">
+                            <span data-lang-en>What I Do</span><span data-lang-hi>मैं क्या करता हूँ</span>
+                        </span>
+                        <h2 class="text-4xl md:text-6xl font-extrabold mt-2">
+                            <span class="text-gradient-pop">
+                                <span data-lang-en>Core Expertise</span><span data-lang-hi>मुख्य विशेषज्ञता</span>
+                            </span>
+                        </h2>
+                    </div>
+                    <!-- Photo UPDATED -->
+                    <div class="md:col-span-1 hidden md:block"> <!-- Hide on mobile -->
+                        <div class="animated-photo-frame">
+                            <img src="https://i.imgur.com/aMH8PdC.jpg" 
+                                 alt="My Expertise"
+                                 class="rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                    <!-- Card 1: Digital Marketing -->
+                    <div class="expertise-card bg-gray-800 p-6 rounded-lg scroll-animate">
+                        <div class="mb-4">
+                            <svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.433 13.640A3 3 0 114 13h1m-1 0a3 3 0 100 6m0-6h1m5.433-6.36A3 3 0 1114 7h1m-1 0a3 3 0 100 6m0-6h1M13 3.76v1.16m.0 10.75v1.16m5.64-5.64h1.16m-10.75 0h1.16"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">
+                            <span data-lang-en>Digital Marketing & Brand Strategy</span>
+                            <span data-lang-hi>डिजिटल मार्केटिंग और ब्रांड रणनीति</span>
+                        </h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            <span data-lang-en>YouTube/Instagram growth, AI scriptwriting, brand identity, ad funnels, and viral content planning.</span>
+                            <span data-lang-hi>YouTube/Instagram ग्रोथ, AI स्क्रिप्ट राइटिंग, ब्रांड पहचान, विज्ञापन फनल और वायरल कंटेंट प्लानिंग।</span>
+                            <!-- NEW: Benefit -->
+                            <span class="block mt-2 text-sm text-lime-400"><strong>
+                                <span data-lang-en>Fayda:</span><span data-lang-hi>फायदा:</span>
+                            </strong> 
+                                <span data-lang-en>Aapka brand alag dikhega aur sales badhengi.</span>
+                                <span data-lang-hi>आपका ब्रांड अलग दिखेगा और बिक्री बढ़ेगी।</span>
+                            </span>
+                        </p>
+                    </div>
+
+                    <!-- Card 2: AI Content -->
+                    <div class="expertise-card bg-gray-800 p-6 rounded-lg scroll-animate" style="transition-delay: 100ms;">
+                        <div class="mb-4">
+                            <svg class="w-12 h-12 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">
+                            <span data-lang-en>AI Content Creation & Automation</span>
+                            <span data-lang-hi>AI कंटेंट निर्माण और ऑटोमेशन</span>
+                        </h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            <span data-lang-en>AI video/photography, auto-scripts, AI presenters, and ChatGPT prompt frameworks for businesses.</span>
+                            <span data-lang-hi>AI वीडियो/फोटोग्राफी, ऑटो-स्क्रिप्ट, AI प्रेजेंटर्स, और व्यवसायों के लिए ChatGPT प्रॉम्प्ट फ्रेमवर्क।</span>
+                            <!-- NEW: Benefit -->
+                            <span class="block mt-2 text-sm text-lime-400"><strong>
+                                <span data-lang-en>Fayda:</span><span data-lang-hi>फायदा:</span>
+                            </strong> 
+                                <span data-lang-en>Kam samay aur kam kharch mein professional content.</span>
+                                <span data-lang-hi>कम समय और कम खर्च में प्रोफेशनल कंटेंट।</span>
+                            </span>
+                        </p>
+                    </div>
+
+                    <!-- Card 3: Consulting -->
+                    <div class="expertise-card bg-gray-800 p-6 rounded-lg scroll-animate" style="transition-delay: 200ms;">
+                        <div class="mb-4">
+                            <svg class="w-12 h-12 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100 4m0-4a2 2 0 110 4m0-4v2m0 4v2m6-8a2 2 0 100 4m0-4a2 2 0 110 4m0-4v2m0 4v2M18 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m0-4v2m0 4v2"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">
+                            <span data-lang-en>Startup & Business Consulting</span>
+                            <span data-lang-hi>स्टार्टअप और बिजनेस कंसल्टिंग</span>
+                        </h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            <span data-lang-en>Idea validation, business model design, GTM launch planning, and MSME digital transformation.</span>
+                            <span data-lang-hi>आइडिया वैलिडेशन, बिजनेस मॉडल डिजाइन, GTM लॉन्च प्लानिंग, और MSME डिजिटल ट्रांसफॉर्मेशन।</span>
+                            <!-- NEW: Benefit -->
+                            <span class="block mt-2 text-sm text-lime-400"><strong>
+                                <span data-lang-en>Fayda:</span><span data-lang-hi>फायदा:</span>
+                            </strong> 
+                                <span data-lang-en>Clear direction aur growth ka solid plan.</span>
+                                <span data-lang-hi>स्पष्ट दिशा और विकास की ठोस योजना।</span>
+                            </span>
+                        </p>
+                    </div>
+
+                    <!-- Card 4: Real Estate -->
+                    <div class="expertise-card bg-gray-800 p-6 rounded-lg scroll-animate" style="transition-delay: 300ms;">
+                        <div class="mb-4">
+                            <svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">
+                            <span data-lang-en>Property & Real Estate Digital Promotion</span>
+                            <span data-lang-hi>प्रॉपर्टी और रियल एस्टेट डिजिटल प्रमोशन</span>
+                        </h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            <span data-lang-en>Builder branding, AI property photoshoots, buyer lead funnels, and digital project walkthroughs.</span>
+                            <span data-lang-hi>बिल्डर ब्रांडिंग, AI प्रॉपर्टी फोटोशूट, खरीदार लीड फनल, और डिजिटल प्रोजेक्ट वॉकथ्रू।</span>
+                            <!-- NEW: Benefit -->
+                            <span class="block mt-2 text-sm text-lime-400"><strong>
+                                <span data-lang-en>Fayda:</span><span data-lang-hi>फायदा:</span>
+                            </strong> 
+                                <span data-lang-en>Zyaada buyers tak pahunchein aur fast booking.</span>
+                                <span data-lang-hi>ज़्यादा खरीदारों तक पहुंचें और तेज़ बुकिंग।</span>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECTION: SOCIAL MEDIA SETUP (as bonus) ===== -->
+        <section id="setup" class="py-16 md:py-24 px-4 md:px-8">
+            <div class="max-w-6xl mx-auto scroll-animate">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">
+                        <span data-lang-en>A Complete Digital Footprint</span>
+                        <span data-lang-hi>एक संपूर्ण डिजिटल फुटप्रिंट</span>
+                    </h2>
+                    <p class="text-lg text-gray-400">
+                        <span data-lang-en>I professionally build and optimize your complete digital ecosystem to build trust.</span>
+                        <span data-lang-hi>मैं विश्वास बनाने के लिए आपके संपूर्ण डिजिटल इकोसिस्टम का पेशेवर रूप से निर्माण और अनुकूलन करता हूँ।</span>
+                    </p>
+                </div>
+                <div class="flex flex-wrap justify-center items-center gap-4 md:gap-6">
+                    <span class="bg-gray-800 text-gray-300 text-sm font-medium px-4 py-2 rounded-full">Google Business Profile</span>
+                    <span class="bg-gray-800 text-gray-300 text-sm font-medium px-4 py-2 rounded-full">JustDial</span>
+                    <span class="bg-gray-800 text-gray-300 text-sm font-medium px-4 py-2 rounded-full">IndiaMART</span>
+                    <span class="bg-gray-800 text-gray-300 text-sm font-medium px-4 py-2 rounded-full">Facebook Page</span>
+                    <span class="bg-gray-800 text-gray-300 text-sm font-medium px-4 py-2 rounded-full">Instagram Shop</span>
+                    <span class="bg-gray-800 text-gray-300 text-sm font-medium px-4 py-2 rounded-full">YouTube Channel</span>
+                    <span class="bg-gray-800 text-gray-300 text-sm font-medium px-4 py-2 rounded-full">LinkedIn Page</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECTION: SIGNATURE SERVICES ===== -->
+        <section id="services" class="py-16 md:py-24 px-4 md:px-8 bg-gray-900">
+            <div class="max-w-6xl mx-auto">
+                <!-- Section Header with Image -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-12 md:mb-20 scroll-animate">
+                    <!-- Photo UPDATED -->
+                    <div class="md:col-span-1 hidden md:block"> <!-- Hide on mobile -->
+                        <div class="animated-photo-frame">
+                            <img src="https://i.imgur.com/XkynLr2.jpg" 
+                                 alt="My Services"
+                                 class="rounded-lg">
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 text-center md:text-right">
+                        <span class="text-sm font-semibold text-blue-400 uppercase tracking-wider">
+                            <span data-lang-en>Creator Services</span><span data-lang-hi>क्रिएटर सेवाएं</span>
+                        </span>
+                        <h2 class="text-4xl md:text-6xl font-extrabold mt-2">
+                            <span class="text-gradient-pop">
+                                <span data-lang-en>Signature Services</span><span data-lang-hi>प्रमुख सेवाएं</span>
+                            </span>
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
+                    <!-- Service 1, 2, 3 -->
+                    <div class="space-y-10 md:space-y-16">
+                        <div class="scroll-animate">
+                            <h3 id="service-1-btn" class="text-2xl font-bold text-white mb-4 cursor-pointer hover:text-yellow-400 transition-colors">
+                                <span data-lang-en>1. Brand Promotion for MSMEs & Local Businesses</span>
+                                <span data-lang-hi>1. MSMEs और स्थानीय व्यवसायों के लिए ब्रांड प्रमोशन</span>
+                            </h3>
+                            <p class="text-gray-400 mb-4">
+                                <span data-lang-en>Shops, factories, restaurants, hospitals, clinics, schools, real-estate builders, and local service providers.</span>
+                                <span data-lang-hi>दुकानें, कारखाने, रेस्तरां, अस्पताल, क्लीनिक, स्कूल, रियल-एस्टेट बिल्डर्स, और स्थानीय सेवा प्रदाता।</span>
+                            </p>
+                            <p class="text-sm text-yellow-400 font-semibold">
+                                <span data-lang-en>Deliverables: Brand setup • Photo/video content • Reviews building • Ads funnels • Reputation growth</span>
+                                <span data-lang-hi>डिलीवरेबल्स: ब्रांड सेटअप • फोटो/वीडियो कंटेंट • रिव्यू बिल्डिंग • विज्ञापन फनल • प्रतिष्ठा वृद्धि</span>
+                            </p>
+                            <!-- NEW: CTA -->
+                            <a href="#contact" class="inline-block mt-4 text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                                <span data-lang-en>Start Your Project</span><span data-lang-hi>अपना प्रोजेक्ट शुरू करें</span> &rarr;
+                            </a>
+                        </div>
+                        <div class="scroll-animate">
+                            <h3 class="text-2xl font-bold text-white mb-4">
+                                <span data-lang-en>2. AI-Powered Photo & Video Services</span>
+                                <span data-lang-hi>2. AI-संचालित फोटो और वीडियो सेवाएं</span>
+                            </h3>
+                            <p class="text-gray-400 mb-4">
+                                <span data-lang-en>AI pre-wedding shoots, AI cinematic ads, AI LinkedIn headshots, AI property visuals, and AI travel reels.</span>
+                                <span data-lang-hi>AI प्री-वेडिंग शूट, AI सिनेमैटिक विज्ञापन, AI लिंक्डइन हेडशॉट्स, AI प्रॉपर्टी विजुअल्स, और AI ट्रैवल रील्स।</span>
+                            </p>
+                            <p class="text-sm text-lime-400 font-semibold italic">
+                                <span data-lang-en>No expensive shoots. No equipment. Just creativity + AI.</span>
+                                <span data-lang-hi>कोई महंगा शूट नहीं। कोई उपकरण नहीं। बस रचनात्मकता + AI।</span>
+                            </p>
+                            <!-- NEW: CTA -->
+                            <a href="#contact" class="inline-block mt-4 text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                                <span data-lang-en>Discuss AI Concepts</span><span data-lang-hi>AI कॉन्सेप्ट्स पर चर्चा करें</span> &rarr;
+                            </a>
+                        </div>
+                        <div class="scroll-animate">
+                            <h3 class="text-2xl font-bold text-white mb-4">
+                                <span data-lang-en>3. Prompt Engineering & Creator Systems</span>
+                                <span data-lang-hi>3. प्रॉम्प्ट इंजीनियरिंग और क्रिएटर सिस्टम</span>
+                            </h3>
+                            <p class="text-gray-400">
+                                <span data-lang-en>Custom GPT workflows, automated content calendars, fast scripting systems, AI editing pipelines, and AI WhatsApp automation.</span>
+                                <span data-lang-hi>कस्टम GPT वर्कफ्लो, स्वचालित कंटेंट कैलेंडर, फास्ट स्क्रिप्टिंग सिस्टम, AI एडिटिंग पाइपलाइन, और AI व्हाट्सएप ऑटोमेशन।</span>
+                            </p>
+                            <!-- NEW: CTA -->
+                            <a href="#contact" class="inline-block mt-4 text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                                <span data-lang-en>Automate Your Content</span><span data-lang-hi>अपना कंटेंट ऑटोमेट करें</span> &rarr;
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Service 4 & 5 -->
+                    <div class="space-y-10 md:space-y-16">
+                        <div class="scroll-animate">
+                            <h3 class="text-2xl font-bold text-white mb-4">
+                                <span data-lang-en>4. Sponsorships & Paid Partnerships</span>
+                                <span data-lang-hi>4. स्पॉन्सरशिप और पेड पार्टनरशिप</span>
+                            </h3>
+                            <p class="text-gray-400">
+                                <span data-lang-en>I create: Product reviews, local business promotions, story-based ads, founder interviews, and restaurant promotion reels.</span>
+                                <span data-lang-hi>मैं बनाता हूँ: प्रोडक्ट रिव्यू, स्थानीय व्यापार प्रचार, स्टोरी-बेस्ड विज्ञापन, संस्थापक इंटरव्यू, और रेस्तरां प्रमोशन रील्स।</span>
+                            </p>
+                            <!-- NEW: CTA -->
+                            <a href="#contact" class="inline-block mt-4 text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                                <span data-lang-en>Partner With Me</span><span data-lang-hi>मेरे साथ पार्टनर बनें</span> &rarr;
+                            </a>
+                        </div>
+                        <div class="scroll-animate">
+                            <h3 class="text-2xl font-bold text-white mb-4">
+                                <span data-lang-en>5. Author & Digital Coach</span>
+                                <span data-lang-hi>5. लेखक और डिजिटल कोच</span>
+                            </h3>
+                            <p class="text-gray-400">
+                                <span data-lang-en>I write on: AI, digital growth, business ideas, content discipline, and opportunity mindset. I also mentor individuals on AI, content creation, and personal branding.</span>
+                                <span data-lang-hi>मैं इन पर लिखता हूँ: AI, डिजिटल ग्रोथ, बिजनेस आइडिया, कंटेंट अनुशासन, और अवसर मानसिकता। मैं AI, कंटेंट निर्माण और व्यक्तिगत ब्रांडिंग पर व्यक्तियों को मेंटर भी करता हूँ।</span>
+                            </p>
+                            <!-- NEW: CTA -->
+                            <a href="#contact" class="inline-block mt-4 text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                                <span data-lang-en>Get Mentorship</span><span data-lang-hi>मेंटरशिप प्राप्त करें</span> &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECTION: EXPERIENCE ===== -->
+        <section id="experience" class="py-16 md:py-24 px-4 md:px-8">
+            <div class="max-w-6xl mx-auto">
+                <!-- Section Header with Image -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-12 md:mb-20 scroll-animate">
+                    <div class="md:col-span-2">
+                        <h2 class="text-4xl md:text-5xl font-extrabold mb-6">
+                            <span class="heading-underline">
+                                <span data-lang-en>Digital Creator Experience</span><span data-lang-hi>डिजिटल क्रिएटर अनुभव</span>
+                            </span>
+                        </h2>
+                        <p class="text-lg text-gray-400 italic">
+                            <span data-lang-en>(Corporate work rewritten for the creator era. No admin words. Only communication, storytelling, digital, and content.)</span>
+                            <span data-lang-hi>(कॉर्पोरेट काम को क्रिएटर युग के लिए फिर से लिखा गया। कोई प्रशासनिक शब्द नहीं। केवल संचार, स्टोरीटेलिंग, डिजिटल और कंटेंट।)</span>
+                        </p>
+                    </div>
+                    <!-- Photo UPDATED -->
+                    <div class="md:col-span-1 hidden md:block"> <!-- Hide on mobile -->
+                        <div class="animated-photo-frame">
+                            <img src="https://i.imgur.com/Bn4xf4d.jpg" 
+                                 alt="Mr Bharadvaja Work"
+                                 class="rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-12">
+                    <!-- Experience 1 -->
+                    <div class="scroll-animate">
+                        <h3 class="text-2xl md:text-3xl font-bold text-gradient-pop mb-2">Hyundai Engineering</h3>
+                        <p class="text-lg font-semibold text-gray-300 mb-3">
+                            <span data-lang-en>Digital Media & Intercultural Communication Contributor</span>
+                            <span data-lang-hi>डिजिटल मीडिया और इंटरकल्चरल कम्युनिकेशन योगदानकर्ता</span>
+                        </p>
+                        <p class="text-sm text-gray-500 uppercase tracking-wider mb-4">(Saudi Arabia, Qatar, Kuwait)</p>
+                        <ul class="list-check text-gray-300">
+                            <li><span data-lang-en>Created leadership-level presentations & storytelling visuals.</span><span data-lang-hi>लीडरशिप-लेवल प्रेजेंटेशन और स्टोरीटेलिंग विजुअल्स बनाए।</span></li>
+                            <li><span data-lang-en>Produced digital assets and on-ground content for internal communication.</span><span data-lang-hi>आंतरिक संचार के लिए डिजिटल संपत्ति और ऑन-ग्राउंड कंटेंट का उत्पादन किया।</span></li>
+                            <li><span data-lang-en>Helped craft training visuals, newsletters, and project updates.</span><span data-lang-hi>प्रशिक्षण विजुअल्स, न्यूज़लेटर्स और प्रोजेक्ट अपडेट तैयार करने में मदद की।</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Experience 2 -->
+                    <div class="scroll-animate">
+                        <h3 class="text-2xl md:text-3xl font-bold text-gradient-pop mb-2">JGC Corporation</h3>
+                        <p class="text-lg font-semibold text-gray-300 mb-3">
+                            <span data-lang-en>Digital Communication & AI Content Support</span>
+                            <span data-lang-hi>डिजिटल कम्युनिकेशन और AI कंटेंट सपोर्ट</span>
+                        </p>
+                        <p class="text-sm text-gray-500 uppercase tracking-wider mb-4">(Indonesia, Iraq)</p>
+                        <ul class="list-check text-gray-300">
+                            <li><span data-lang-en>Designed visual reports used in management meetings.</span><span data-lang-hi>मैनेजमेंट बैठकों में उपयोग की जाने वाली विजुअल रिपोर्ट डिजाइन की।</span></li>
+                            <li><span data-lang-en>Built narrative-based project storytelling content.</span><span data-lang-hi>कथा-आधारित प्रोजेक्ट स्टोरीटेलिंग कंटेंट बनाया।</span></li>
+                            <li><span data-lang-en>Created AI-enhanced visual summaries for workforce & logistics.</span><span data-lang-hi>कार्यबल और लॉजिस्टिक्स के लिए AI-संवर्धित विजुअल सारांश बनाए।</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Experience 3 -->
+                    <div class="scroll-animate">
+                        <h3 class="text-2xl md:text-3xl font-bold text-gradient-pop mb-2">BP (British Petroleum)</h3>
+                        <p class="text-lg font-semibold text-gray-300 mb-3">
+                            <span data-lang-en>Content & Visual Reporting Contributor</span>
+                            <span data-lang-hi>कंटेंट और विजुअल रिपोर्टिंग योगदानकर्ता</span>
+                        </p>
+                        <p class="text-sm text-gray-500 uppercase tracking-wider mb-4">(Indonesia)</p>
+                        <ul class="list-check text-gray-300">
+                            <li><span data-lang-en>Helped simplify technical communication into easy visual formats.</span><span data-lang-hi>तकनीकी संचार को आसान विजुअल प्रारूपों में सरल बनाने में मदद की।</span></li>
+                            <li><span data-lang-en>Designed awareness, safety & internal campaign visuals.</span><span data-lang-hi>जागरूकता, सुरक्षा और आंतरिक अभियान विजुअल्स डिजाइन किए।</span></li>
+                            <li><span data-lang-en>Supported reporting teams with AI-enhanced data visuals.</span><span data-lang-hi>AI-संवर्धित डेटा विजुअल्स के साथ रिपोर्टिंग टीमों का समर्थन किया।</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECTION: SKILLS ===== -->
+        <section id="skills" class="py-16 md:py-24 px-4 md:px-8 bg-gray-900">
+            <div class="max-w-6xl mx-auto">
+                <!-- Section Header with Image -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-12 md:mb-20 scroll-animate">
+                    <div class="md:col-span-2 text-center md:text-left">
+                        <h2 class="text-4xl md:text-6xl font-extrabold">
+                            <span class="text-gradient-pop">
+                                <span data-lang-en>Skills & Tools</span><span data-lang-hi>कौशल और उपकरण</span>
+                            </span>
+                        </h2>
+                    </div>
+                    <!-- Photo UPDATED -->
+                    <div class="md:col-span-1 hidden md:block"> <!-- Hide on mobile -->
+                        <div class="animated-photo-frame">
+                            <img src="https://i.imgur.com/7rlnOhF.jpg" 
+                                 alt="My Skills"
+                                 class="rounded-lg">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16">
+                    <!-- Digital Skills -->
+                    <div class="scroll-animate">
+                        <h3 class="text-2xl font-bold text-blue-400 mb-4">
+                            <span data-lang-en>Digital Skills</span><span data-lang-hi>डिजिटल कौशल</span>
+                        </h3>
+                        <ul class="list-rocket space-y-2 text-gray-300">
+                            <li><span data-lang-en>Storytelling for brands</span><span data-lang-hi>ब्रांडों के लिए स्टोरीटेलिंग</span></li>
+                            <li><span data-lang-en>Reels & shorts creation</span><span data-lang-hi>रील्स और शॉर्ट्स निर्माण</span></li>
+                            <li><span data-lang-en>AI video & AI photography</span><span data-lang-hi>AI वीडियो और AI फोटोग्राफी</span></li>
+                            <li><span data-lang-en>Brand design & identity</span><span data-lang-hi>ब्रांड डिजाइन और पहचान</span></li>
+                            <li><span data-lang-en>SEO, Google Ads, Meta Ads</span><span data-lang-hi>SEO, गूगल विज्ञापन, मेटा विज्ञापन</span></li>
+                            <li><span data-lang-en>YouTube optimization</span><span data-lang-hi>यूट्यूब ऑप्टिमाइजेशन</span></li>
+                            <li><span data-lang-en>Thumbnail & visual design</span><span data-lang-hi>थंबनेल और विजुअल डिजाइन</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- AI & Automation -->
+                    <div class="scroll-animate" style="transition-delay: 150ms;">
+                        <h3 class="text-2xl font-bold text-lime-400 mb-4">
+                            <span data-lang-en>AI & Automation</span><span data-lang-hi>AI और ऑटोमेशन</span>
+                        </h3>
+                        <ul class="list-rocket space-y-2 text-gray-300">
+                            <li><span data-lang-en>ChatGPT advanced prompt engineering</span><span data-lang-hi>ChatGPT एडवांस्ड प्रॉम्प्ट इंजीनियरिंग</span></li>
+                            <li><span data-lang-en>AI workflow design</span><span data-lang-hi>AI वर्कफ्लो डिजाइन</span></li>
+                            <li><span data-lang-en>Auto scripts & auto content</span><span data-lang-hi>ऑटो स्क्रिप्ट और ऑटो कंटेंट</span></li>
+                            <li><span data-lang-en>PowerBI visuals for storytelling</span><span data-lang-hi>स्टोरीटेलिंग के लिए PowerBI विजुअल्स</span></li>
+                            <li><span data-lang-en>AI dashboards for creators</span><span data-lang-hi>क्रिएटर्स के लिए AI डैशबोर्ड</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Business Skills -->
+                    <div class="scroll-animate" style="transition-delay: 300ms;">
+                        <h3 class="text-2xl font-bold text-yellow-400 mb-4">
+                            <span data-lang-en>Business Skills</span><span data-lang-hi>व्यावसायिक कौशल</span>
+                        </h3>
+                        <ul class="list-rocket space-y-2 text-gray-300">
+                            <li><span data-lang-en>Digital sales funnels</span><span data-lang-hi>डिजिटल सेल्स फनल</span></li>
+                            <li><span data-lang-en>MSME digital transformation</span><span data-lang-hi>MSME डिजिटल ट्रांसफॉर्मेशन</span></li>
+                            <li><span data-lang-en>Market positioning</span><span data-lang-hi>मार्केट पोजिशनिंग</span></li>
+                            <li><span data-lang-en>Business model planning</span><span data-lang-hi>बिजनेस मॉडल प्लानिंग</span></li>
+                            <li><span data-lang-en>Property content strategy</span><span data-lang-hi>प्रॉपर्टी कंटेंट स्ट्रैटेजी</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== FOOTER: SOCIALS & CONTACT ===== -->
+        <footer id="contact" class="py-16 md:py-24 px-4 md:px-8">
+            <div class="max-w-5xl mx-auto text-center">
+                <div class="scroll-animate mb-10">
+                    <h2 class="text-4xl md:text-5xl font-extrabold mb-4">
+                        <span data-lang-en>Let's Connect</span><span data-lang-hi>चलिए जुड़ते हैं</span>
+                    </h2>
+                    <p class="text-lg text-gray-400 max-w-xl mx-auto">
+                        <span data-lang-en>Connect with me on social media where I share content on digital growth, marketing, AI, and business ideas.</span>
+                        <span data-lang-hi>मेरे साथ सोशल मीडिया पर जुड़ें जहाँ मैं डिजिटल ग्रोथ, मार्केटिंग, AI और बिजनेस आइडिया पर कंटेंट साझा करता हूँ।</span>
+                    </p>
+                </div>
+
+                <!-- Social Handles -->
+                <div class="flex flex-wrap justify-center items-center gap-4 mb-12 scroll-animate">
+                    <!-- Instagram -->
+                    <a href="https://www.instagram.com/mrbharadvaja" target="_blank"
+                        class="flex items-center bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-full transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.148 3.227-1.669 4.771-4.919 4.919-1.266.058-1.647.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.07-1.646-.07-4.85s.012-3.584.07-4.85C2.165 6.93 3.71 5.41 6.93 5.263c1.266-.058 1.647-.07 4.85-.07m0-2.163c-3.259 0-3.667.014-4.947.072-4.305.196-6.135 2.025-6.331 6.331-.058 1.28-.072 1.688-.072 4.947s.014 3.667.072 4.947c.196 4.305 2.025 6.135 6.331 6.331 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c4.305-.196 6.135-2.025 6.331-6.331.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.196-4.305-2.025-6.135-6.331-6.331C15.667.014 15.259 0 12 0zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zM12 16c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44s-1.44-.645-1.44-1.44.646-1.44 1.44-1.44 1.44.645 1.44 1.44z"></path>
+                        </svg>
+                        @mrbharadvaja
+                    </a>
+                    <!-- YouTube -->
+                    <a href="https://www.youtube.com/mrbharadvaja" target="_blank"
+                        class="flex items-center bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-full transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M21.58 7.19c-.23-.86-.9-1.52-1.76-1.76C18.15 5 12 5 12 5s-6.15 0-7.82.43c-.86.24-1.53.9-1.76 1.76C2 8.85 2 12 2 12s0 3.15.43 4.81c.23.86.9 1.52 1.76 1.76C5.85 19 12 19 12 19s6.15 0 7.82-.43c.86-.24 1.53-.9 1.76-1.76C22 15.15 22 12 22 12s0-3.15-.42-4.81zM9.55 15.58V8.42L15.4 12l-5.85 3.58z"></path>
+                        </svg>
+                        Mr Bharadvaja
+                    </a>
+                    <!-- Twitter/X -->
+                    <a href="https://twitter.com/mrbharadvaja" target="_blank"
+                        class="flex items-center bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-full transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.931L18.901 1.153zM17.61 20.644h2.039L6.106 3.16h-2.15l13.654 17.484z"></path>
+                        </svg>
+                        @mrbharadvaja
+                    </a>
+                    
+                    <!-- NEW: Facebook Button -->
+                    <a href="https://www.facebook.com/mrbharadvajagroup" target="_blank"
+                        class="flex items-center bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-full transition-all duration-300">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.04C6.5 2.04 2 6.54 2 12.06c0 4.98 3.66 9.13 8.44 9.9v-7.03H7.9v-2.87h2.54V9.8c0-2.52 1.5-3.92 3.8-3.92 1.1 0 2.22.2 2.22.2v2.46h-1.22c-1.24 0-1.64.78-1.64 1.58v1.88h2.78l-.44 2.87h-2.34v7.03c4.78-.77 8.44-4.92 8.44-9.9C22 6.54 17.5 2.04 12 2.04z"></path>
+                        </svg>
+                        @mrbharadvajagroup
+                    </a>
+                    
+                    <!-- NEW: WhatsApp Button in Footer -->
+                    <a href="https://wa.me/919631815142" target="_blank"
+                        class="flex items-center bg-gray-800 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-full transition-all duration-300">
+                        <!-- WhatsApp Icon -->
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.6 15.28 3.43 16.69L2.13 21.87L7.43 20.61C8.8 21.36 10.36 21.81 12.04 21.81C17.5 21.81 21.95 17.36 21.95 11.91C21.95 6.45 17.5 2 12.04 2M12.04 3.65C16.58 3.65 20.29 7.36 20.29 11.91C20.29 16.45 16.58 20.16 12.04 20.16C10.5 20.16 9.07 19.76 7.84 19.08L7.54 18.91L4.31 19.79L5.22 16.62L5.03 16.31C4.26 15.02 3.79 13.53 3.79 11.91C3.79 7.36 7.5 3.65 12.04 3.65M16.92 14.38C16.71 14.88 15.91 15.33 15.48 15.38C15.12 15.43 14.63 15.44 14.19 15.29C13.21 15.04 11.94 14.53 10.9 13.56C10.06 12.8 9.5 11.83 9.39 11.61C9.28 11.39 9.17 11.16 9.17 10.91C9.17 10.66 9.3 10.54 9.45 10.39C9.61 10.23 9.78 10.05 10.01 9.84C10.22 9.64 10.33 9.54 10.43 9.34C10.54 9.14 10.59 8.97 10.51 8.81C10.43 8.65 10.03 7.68 9.83 7.18C9.64 6.68 9.45 6.74 9.3 6.73C9.16 6.72 9.01 6.72 8.87 6.72C8.73 6.72 8.49 6.77 8.28 6.97C8.07 7.17 7.72 7.52 7.72 8.23C7.72 8.94 8.28 9.61 8.4 9.77C8.52 9.93 9.24 10.96 10.21 11.45C11.18 11.94 11.75 12.19 12.13 12.31C12.7 12.49 13.08 12.45 13.34 12.2C13.61 11.95 14.23 11.27 14.34 10.96C14.45 10.65 14.56 10.68 14.78 10.78C15 10.88 16.29 11.52 16.53 11.77C16.77 12.01 16.92 12.17 16.97 12.31C17.03 12.45 16.92 12.7 16.81 12.9Z" />
+                        </svg>
+                        WhatsApp
+                    </a>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="scroll-animate text-gray-400">
+                    <p class="text-lg font-semibold mb-2">
+                        <span data-lang-en>Get in Touch</span><span data-lang-hi>संपर्क करें</span>
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4">
+                        <a href="mailto:mrbharadvajaa@gmail.com"
+                            class="hover:text-blue-400 transition-colors duration-300">
+                            mrbharadvajaa@gmail.com
+                        </a>
+                        <span class="hidden sm:block">|</span>
+                        <a href="https://wa.me/919631815142" target="_blank"
+                            class="hover:text-lime-400 transition-colors duration-300">
+                            WhatsApp: +91 9631815142
+                        </a>
+                    </div>
+                </div>
+
+                <!-- NEW: QR Code Section -->
+                <div class="mt-12 scroll-animate">
+                    <p class="text-lg text-gray-400 mb-4">
+                        <span data-lang-en>Scan to Connect</span><span data-lang-hi>कनेक्ट करने के लिए स्कैन करें</span>
+                    </p>
+                    <div class="flex justify-center">
+                        <img src="https://i.imgur.com/kHwNTLz.jpg" 
+                             alt="Mr Bharadvaja QR Code"
+                             class="w-48 h-48 rounded-lg border-4 border-gray-700 shadow-xl object-cover">
+                    </div>
+                </div>
+
+                <!-- NEW: Website Link -->
+                <div class="mt-12 text-gray-400 scroll-animate">
+                    <a href="https://www.mrbharadvaja.com" target="_blank" class="hover:text-yellow-400 transition-colors">
+                        www.mrbharadvaja.com
+                    </a>
+                </div>
+
+                <!-- Copyright -->
+                <div class="mt-8 text-gray-600 text-sm scroll-animate"> <!-- Adjusted margin -->
+                    &copy; <span id="current-year"></span> MR BHARADVAJA. 
+                    <span data-lang-en>All rights reserved.</span><span data-lang-hi>सर्वाधिकार सुरक्षित।</span>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- ===== NEW: AI CHAT WIDGET & FABs ===== -->
+
+    <!-- AI Chat Widget (Hidden by default) -->
+    <div id="chat-widget" class="chat-widget">
+        <div class="chat-header">
+            <span>
+                <span data-lang-en>AI Assistant</span><span data-lang-hi>AI सहायक</span>
+            </span>
+            <button id="chat-close-btn" class="close-btn">&times;</button>
+        </div>
+        <div id="chat-body" class="chat-body">
+            <!-- Messages will be added by JS -->
+        </div>
+        <div id="chat-quick-reply" class="chat-quick-reply">
+            <button class="quick-reply-btn" data-reply="benefits">
+                <span data-lang-en>What are the benefits?</span><span data-lang-hi>क्या फायदे हैं?</span>
+            </button>
+            <button class="quick-reply-btn" data-reply="services">
+                <span data-lang-en>What are your services?</span><span data-lang-hi>आपकी सेवाएं क्या हैं?</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Action Buttons -->
+    <div class="fab-container">
+        <!-- WhatsApp FAB -->
+        <a href="https://wa.me/919631815142" target="_blank" class="fab-btn fab-whatsapp" 
+           aria-label="Chat on WhatsApp">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.6 15.28 3.43 16.69L2.13 21.87L7.43 20.61C8.8 21.36 10.36 21.81 12.04 21.81C17.5 21.81 21.95 17.36 21.95 11.91C21.95 6.45 17.5 2 12.04 2M12.04 3.65C16.58 3.65 20.29 7.36 20.29 11.91C20.29 16.45 16.58 20.16 12.04 20.16C10.5 20.16 9.07 19.76 7.84 19.08L7.54 18.91L4.31 19.79L5.22 16.62L5.03 16.31C4.26 15.02 3.79 13.53 3.79 11.91C3.79 7.36 7.5 3.65 12.04 3.65M16.92 14.38C16.71 14.88 15.91 15.33 15.48 15.38C15.12 15.43 14.63 15.44 14.19 15.29C13.21 15.04 11.94 14.53 10.9 13.56C10.06 12.8 9.5 11.83 9.39 11.61C9.28 11.39 9.17 11.16 9.17 10.91C9.17 10.66 9.3 10.54 9.45 10.39C9.61 10.23 9.78 10.05 10.01 9.84C10.22 9.64 10.33 9.54 10.43 9.34C10.54 9.14 10.59 8.97 10.51 8.81C10.43 8.65 10.03 7.68 9.83 7.18C9.64 6.68 9.45 6.74 9.3 6.73C9.16 6.72 9.01 6.72 8.87 6.72C8.73 6.72 8.49 6.77 8.28 6.97C8.07 7.17 7.72 7.52 7.72 8.23C7.72 8.94 8.28 9.61 8.4 9.77C8.52 9.93 9.24 10.96 10.21 11.45C11.18 11.94 11.75 12.19 12.13 12.31C12.7 12.49 13.08 12.45 13.34 12.2C13.61 11.95 14.23 11.27 14.34 10.96C14.45 10.65 14.56 10.68 14.78 10.78C15 10.88 16.29 11.52 16.53 11.77C16.77 12.01 16.92 12.17 16.97 12.31C17.03 12.45 16.92 12.7 16.81 12.9Z" />
+            </svg>
+        </a>
+        <!-- AI Chat Toggle FAB -->
+        <button id="chat-toggle-btn" class="fab-btn fab-chat" 
+                aria-label="Toggle AI Chat">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 21l1.395-3.72C3.512 16.042 3 14.12 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        </button>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            
+            // --- Hero Title Animation ---
+            const heroTitle = document.getElementById('hero-title');
+            if(heroTitle) {
+                const text = heroTitle.textContent.trim();
+                heroTitle.textContent = '';
+                let delay = 0;
+                for (let char of text) {
+                    const span = document.createElement('span');
+                    span.textContent = char === ' ' ? '\u00A0' : char; // Handle spaces
+                    span.style.animationDelay = `${delay}s`;
+                    heroTitle.appendChild(span);
+                    delay += 0.05;
+                }
+            }
+
+            // --- Sticky Nav Logic ---
+            const stickyNav = document.getElementById('sticky-nav-container');
+            const heroSection = document.getElementById('hero');
+
+            if (stickyNav && heroSection) {
+                const observer = new IntersectionObserver(
+                    ([entry]) => {
+                        // entry.isIntersecting is true when the element is in view
+                        if (!entry.isIntersecting) {
+                            // Hero is NOT in view, show sticky nav
+                            stickyNav.classList.add('visible');
+                        } else {
+                            // Hero IS in view, hide sticky nav
+                            stickyNav.classList.remove('visible');
+                        }
+                    },
+                    {
+                        rootMargin: '-100px 0px 0px 0px', // Trigger 100px before hero leaves
+                        threshold: 0
+                    }
+                );
+                observer.observe(heroSection);
+            }
+
+            // --- NEW: Language Toggle Logic ---
+            const langToggleBtn = document.getElementById('lang-toggle-btn');
+            let currentLang = 'en'; // Default is English
+
+            langToggleBtn.addEventListener('click', () => {
+                if (currentLang === 'en') {
+                    currentLang = 'hi';
+                    document.documentElement.lang = 'hi';
+                } else {
+                    currentLang = 'en';
+                    document.documentElement.lang = 'en';
+                }
+            });
+
+            // --- NEW: Modal Logic ---
+            const modal = document.getElementById('service-modal');
+            const openBtn = document.getElementById('service-1-btn');
+            const closeBtn = document.getElementById('modal-close-btn');
+
+            const openModal = () => {
+                if (!modal) return;
+                modal.classList.add('visible');
+                const modalContent = modal.querySelector('.modal-content');
+                
+                // Trigger glow animation
+                modalContent.classList.add('glow');
+                setTimeout(() => {
+                    modalContent.classList.remove('glow');
+                }, 1000); // Animation duration
+            };
+
+            const closeModal = () => {
+                if (!modal) return;
+                modal.classList.remove('visible');
+                // Reset tabs to default (Details)
+                resetTabs();
+            };
+
+            if (openBtn) openBtn.addEventListener('click', openModal);
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                });
+            }
+
+            // Modal Tab Logic
+            const tabButtons = modal.querySelectorAll('.modal-tab');
+            const tabPanels = modal.querySelectorAll('.modal-tab-panel');
+
+            const resetTabs = () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanels.forEach(panel => panel.classList.remove('active'));
+                
+                // Set "Details" as default active
+                modal.querySelector('.modal-tab[data-tab="details"]').classList.add('active');
+                modal.querySelector('#tab-panel-details').classList.add('active');
+            };
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabName = button.dataset.tab;
+                    
+                    // Deactivate all
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabPanels.forEach(panel => panel.classList.remove('active'));
+                    
+                    // Activate clicked
+                    button.classList.add('active');
+                    modal.querySelector(`#tab-panel-${tabName}`).classList.add('active');
+                });
+            });
+
+            // --- NEW: AI Chat Widget Logic ---
+            const chatWidget = document.getElementById('chat-widget');
+            const chatToggleBtn = document.getElementById('chat-toggle-btn');
+            const chatCloseBtn = document.getElementById('chat-close-btn');
+            const chatBody = document.getElementById('chat-body');
+            const quickReplyContainer = document.getElementById('chat-quick-reply');
+
+            const addChatMessage = (message, lang = 'en', sender = 'bot') => {
+                const msgWrapper = document.createElement('div');
+                msgWrapper.classList.add('chat-message', sender);
+                
+                // Add spans for both languages
+                const enSpan = document.createElement('span');
+                enSpan.setAttribute('data-lang-en', '');
+                enSpan.textContent = message.en;
+                
+                const hiSpan = document.createElement('span');
+                hiSpan.setAttribute('data-lang-hi', '');
+                hiSpan.textContent = message.hi;
+
+                msgWrapper.appendChild(enSpan);
+                msgWrapper.appendChild(hiSpan);
+                
+                chatBody.appendChild(msgWrapper);
+                chatBody.scrollTop = chatBody.scrollHeight; // Auto-scroll
+            };
+
+            const showWelcomeMessage = () => {
+                chatBody.innerHTML = ''; // Clear chat
+                setTimeout(() => {
+                    addChatMessage({
+                        en: "Hello! I'm Mr. Bharadvaja's AI Assistant.",
+                        hi: "नमस्ते! मैं मिस्टर भारद्वाज का AI सहायक हूँ।"
+                    });
+                }, 500);
+                setTimeout(() => {
+                    addChatMessage({
+                        en: "I'm here to tell you about the benefits of his services. How can I help?",
+                        hi: "मैं आपको उनकी सेवाओं के फायदों के बारे में बताने के लिए यहाँ हूँ। मैं कैसे मदद कर सकता हूँ?"
+                    });
+                    quickReplyContainer.style.display = 'flex'; // Show replies
+                }, 1500);
+            };
+
+            chatToggleBtn.addEventListener('click', () => {
+                chatWidget.classList.toggle('visible');
+                if (chatWidget.classList.contains('visible')) {
+                    showWelcomeMessage(); // Show welcome every time it's opened
+                }
+            });
+
+            chatCloseBtn.addEventListener('click', () => {
+                chatWidget.classList.remove('visible');
+            });
+
+            // Handle quick replies
+            quickReplyContainer.addEventListener('click', (e) => {
+                if (!e.target.matches('.quick-reply-btn')) return;
+
+                const replyType = e.target.getAttribute('data-reply');
+                
+                // Add user message (simulated)
+                const userMsg = {
+                    en: e.target.querySelector('[data-lang-en]').textContent,
+                    hi: e.target.querySelector('[data-lang-hi]').textContent
+                };
+                addChatMessage(userMsg, currentLang, 'user');
+                
+                // Hide replies and show bot response
+                quickReplyContainer.style.display = 'none';
+
+                if (replyType === 'benefits') {
+                    setTimeout(() => {
+                        addChatMessage({
+                            en: "Great question! Working with Mr. Bharadvaja means you get:",
+                            hi: "बढ़िया सवाल! मिस्टर भारद्वाज के साथ काम करने का मतलब है आपको मिलता है:"
+                        });
+                    }, 1000);
+                    setTimeout(() => {
+                        addChatMessage({
+                            en: "1. Real brand trust (gehra vishwas).\n2. Faster growth with AI.\n3. A complete digital strategy, not just content.",
+                            hi: "1. वास्तविक ब्रांड ट्रस्ट (गहरा विश्वास)।\n2. AI के साथ तेज ग्रोथ।\n3. सिर्फ कंटेंट नहीं, एक संपूर्ण डिजिटल रणनीति।"
+                        });
+                    }, 2000);
+                }
+
+                if (replyType === 'services') {
+                    setTimeout(() => {
+                        addChatMessage({
+                            en: "He offers several signature services:",
+                            hi: "वह कई प्रमुख सेवाएं प्रदान करते हैं:"
+                        });
+                    }, 1000);
+                    setTimeout(() => {
+                        addChatMessage({
+                            en: "Digital Marketing, AI Content Creation, Business Consulting, and Real Estate Promotion. You can see details in the 'Signature Services' section of the site!",
+                            hi: "डिजिटल मार्केटिंग, AI कंटेंट निर्माण, बिजनेस कंसल्टिंग, और रियल एस्टेट प्रमोशन। आप साइट के 'Signature Services' सेक्शन में विवरण देख सकते हैं!"
+                        });
+                    }, 2000);
+                }
+                
+                // Show replies again after a pause
+                setTimeout(() => {
+                    quickReplyContainer.style.display = 'flex';
+                }, 3000);
+            });
+
+
+            // --- FIX: On-scroll reveal animation (Re-added) ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1 // Trigger when 10% is visible
+            });
+
+            document.querySelectorAll('.scroll-animate').forEach(el => {
+                observer.observe(el);
+            });
+
+            // --- FIX: Side Nav Active Link Scroller (Re-added) ---
+            const sections = document.querySelectorAll('section[id], header[id]');
+            const navLinks = document.querySelectorAll('.side-nav a');
+            const sideNav = document.getElementById('side-nav-container');
+
+            const sectionObserver = new IntersectionObserver((entries) => {
+                let currentSectionId = '';
+                
+                entries.forEach(entry => {
+                    // Find the topmost visible section
+                    if (entry.isIntersecting && entry.boundingClientRect.top >= 0) {
+                        if (!currentSectionId) {
+                            currentSectionId = entry.target.id;
+                        }
+                    }
+                });
+
+                // Fallback for sections at the bottom
+                if (!currentSectionId) {
+                    for (let i = entries.length - 1; i >= 0; i--) {
+                        if (entries[i].isIntersecting) {
+                            currentSectionId = entries[i].target.id;
+                            break;
+                        }
+                    }
+                }
+
+                // Hide side nav on hero
+                if (sideNav) {
+                    if (currentSectionId === 'hero') {
+                        sideNav.style.opacity = '0';
+                        sideNav.style.pointerEvents = 'none';
+                    } else {
+                        sideNav.style.opacity = '1';
+                        sideNav.style.pointerEvents = 'auto';
+                    }
+                }
+
+                // Update active link
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${currentSectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+
+            }, {
+                rootMargin: '-40% 0px -60% 0px', // Triggers in the middle 20% of the viewport
+                threshold: 0
+            });
+
+            sections.forEach(sec => {
+                sectionObserver.observe(sec);
+            });
+
+            // --- FIX: Copyright Year (Re-added) ---
+            const yearSpan = document.getElementById('current-year');
+            if(yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+
+        });
+    </script>
+
+</body>
+
+</html>
